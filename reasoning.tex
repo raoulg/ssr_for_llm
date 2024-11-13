@@ -1,0 +1,240 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage{mathtools}
+\usepackage{hyperref}
+
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+
+\title{Type Theory and Large Language Models: \\
+A Framework for Self-Reflective Reasoning}
+\author{Technical Whitepaper}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present a theoretical framework for enhancing large language models (LLMs) with type-theoretical reasoning capabilities. Moving beyond the limitations of traditional knowledge representations, we establish a tripartite relationship between linguistic expressions, type-theoretical models, and semantic vector spaces. This framework enables LLMs to engage in self-reflective reasoning through interaction with a type theory compiler, providing a bridge between neural and symbolic approaches to knowledge representation.
+\end{abstract}
+
+\section{Introduction}
+The challenge of representing and reasoning about knowledge in artificial intelligence systems has led to various approaches, each with their own limitations. Traditional knowledge graphs based on triple stores, while intuitive, lack inherent consistency guarantees. Large language models, despite their impressive capabilities, are prone to hallucination. We propose a framework that combines the rigorous foundations of type theory with the flexibility of neural representations to enable verifiable knowledge reasoning.
+
+\section{Theoretical Foundations}
+
+\subsection{From Triple Stores to Type Theory}
+Traditional knowledge representation often relies on triple stores, expressing knowledge as subject-predicate-object relationships. While intuitive, this approach faces fundamental challenges:
+
+\begin{itemize}
+    \item Lack of inherent consistency guarantees
+    \item Need for additional layers (e.g., OWL) to enforce logical constraints
+    \item Arbitrary nature of relationship definitions
+\end{itemize}
+
+This leads us to seek a more fundamental approach to knowledge representation. Type theory emerges as a natural candidate, offering:
+
+\begin{itemize}
+    \item A foundational system on par with set theory
+    \item Built-in consistency through type checking
+    \item Natural representation of objects and their relationships
+    \item Inherent support for logical inference
+\end{itemize}
+
+\subsection{The Curry-Howard Correspondence}
+The connection between type theory and logic is formalized through the Curry-Howard correspondence~\cite{mimram2020program}, which establishes that:
+
+\[
+\begin{array}{lcl}
+\text{Types} & \leftrightarrow & \text{Axioms} \\
+\text{Programs} & \leftrightarrow & \text{Proofs} \\
+\text{Evaluation} & \leftrightarrow & \text{Proof Normalization}
+\end{array}
+\]
+
+This isomorphism provides us with a crucial tool: when we construct type-theoretical models of knowledge, we are simultaneously constructing proofs of logical propositions.
+
+This triple correspondence provides us with a complete framework for reasoning about:
+\begin{itemize}
+    \item Knowledge representation (through types), by making formal inferences about knowledge
+    \item Verification (through proofs), we can verify logical consistency through type checking
+    \item Computation (through evaluation)
+\end{itemize}
+
+For example, a medical diagnosis system could be expressed as:
+\[
+\begin{array}{l}
+\text{Diagnosis} : \Pi(s : \text{Symptoms}).\Sigma(d : \text{Disease}).\text{Explains}(d, s)
+\end{array}
+\]
+where $\Pi$ denotes a dependent function type\footnote{A dependent function type $\Pi(x:A).B(x)$ can be understood as "for all $x$ of type $A$, there is a $B$ that may depend on $x$". In traditional logic notation, this corresponds to universal quantification $\forall x:A.B(x)$.} and $\Sigma$ denotes a dependent pair type\footnote{A dependent pair type $\Sigma(x:A).B(x)$ represents a pair where the second component's type may depend on the first component. This corresponds to existential quantification $\exists x:A.B(x)$ in logic.}.
+
+% A simpler example might help: if we were modeling a library system, we could write:
+% \[
+% \text{BookLookup} : \Pi(isbn : \text{ISBN}).\Sigma(b : \text{Book}).\text{HasISBN}(b, isbn)
+% \]
+%
+% This reads as: "For any ISBN number, there exists a book that has that ISBN number." The $\Pi$ and $\Sigma$ types allow us to express these relationships precisely and verifiably in our type system.
+
+
+\subsection{Category Theory and Neural Networks}
+Following Shiebler et al.~\cite{shiebler2021category}, we can view machine learning models categorically. Given a monoidal category $(C,\otimes,I)$, a neural network can be seen as a morphism:
+
+\[
+f : P \otimes A \rightarrow B
+\]
+
+where:
+\begin{itemize}
+    \item $P$ represents the parameter space
+    \item $A$ represents the input space
+    \item $B$ represents the output space
+    \item $\otimes$ is the monoidal product
+\end{itemize}
+
+\begin{remark}[Categorical Structure]
+For the categorical framework to be mathematically sound, all components must allow for identity morphisms. While matrix multiplications (via identity matrices) and addition operations (via zero) satisfy this requirement, the traditional ReLU activation function ($\text{max}(0,x)$) does not admit any possible identity morphism. This technical issue can be resolved by using leaky ReLU ($\text{max}(ax,x)$), which theoretically permits an identity morphism when $a=1$, though in practice we would use different values of $a$ for the actual neural network implementation.
+\end{remark}
+
+\subsection{Tripartite Framework}
+We establish three domains and their relationships in diagram~\ref{fig:tripartite}:
+
+
+\begin{figure}[h]
+\centering
+\begin{tikzcd}[column sep=large, row sep=large]
+    & \text{Expressions} \arrow[ld, "\text{model}"'] \arrow[rd, "\text{embed}"] & \\
+    \text{Types} \arrow[rr, "\phi", leftrightarrow] & & \mathbb{R}^d
+\end{tikzcd}
+\caption{The tripartite framework showing mappings between expressions (unstructured text), types (formal models), and vector spaces (neural representations).}
+\label{fig:tripartite}
+\end{figure}
+
+where:
+\begin{itemize}
+    \item Expressions represent unstructured language (texts, documents, natural language)
+    \item Types represent well-formed formulas in type theory
+    \item $\mathbb{R}^d$ represents vector spaces of neural embeddings
+\end{itemize}
+
+Key relationships:
+\begin{itemize}
+    \item $\text{model}: \text{Expressions} \rightarrow \text{Types}$ encompasses both automated parsing (eg when a human writes a well-formed formula and it is parsed by a compiler) and human knowledge modeling (where a human represents knowledge conceptually as a collection of objects and relationships)
+    \item $\text{embed}: \text{Expressions} \rightarrow \mathbb{R}^d$ represents neural embedding, which is a specific instance of the general form $f : P \otimes A \rightarrow B$ where $A$ is the space of expressions and $B = \mathbb{R}^d$
+    \item $\phi: \text{Types} \rightarrow \mathbb{R}^d$ represents the machine-only capability to connect formal models with their neural representations
+\end{itemize}
+
+This framework highlights an important asymmetry: while humans can directly model expressions as types ($\text{model}$), the connection between types and vector spaces ($\phi$) is accessible only to machines, forming the basis for automated reasoning and self-reflection.
+
+\section{Self-Reflective Learning Process}
+
+The framework enables a systematic approach to knowledge acquisition and verification through type theory. We describe the key components and processes that implement this approach.
+\begin{enumerate}
+    \item \textbf{Knowledge Embedding}: Initial knowledge is embedded in the LLM's vector space
+    \item \textbf{Model Generation}: The LLM generates a type-theoretical model of its understanding
+    \item \textbf{Verification}: The model is verified through type checking and query testing
+    \item \textbf{Refinement}: Results feed back into the LLM's representations
+\end{enumerate}
+
+We can express this as a composition of mappings:
+
+\[
+\text{model} = \phi \circ \text{embed}
+\]
+
+Where, instead of doing the slower route where a human has to first create a TypeDB schema and then write queries, the human can let the LLM read a text and interact with a consistent model $M$ without worrying about hallucinations.  
+
+The process is iterative and self-improving:
+
+\[
+\text{model}_{i+1} = \text{refine}(\text{model}_i, \text{verify}(\text{query}(\text{model}_i)))
+\]
+
+where:
+\begin{itemize}
+    \item $\text{model}_i$ is the current type-theoretical model
+    \item $\text{query}$ generates test cases
+    \item $\text{verify}$ checks consistency
+    \item $\text{refine}$ updates the model based on verification results
+\end{itemize}
+
+\subsection{Knowledge Components}
+At the core of our framework are queries to a type-theoretical model, implemented in TypeDB, which serve as the formal representation of knowledge. These are accompanied by hypotheses:
+
+\begin{definition}[Hypothesis]
+A hypothesis consists of:
+\begin{itemize}
+    \item A query $q$ in TypeQL
+    \item An expected result $r_i$ (which may be a complex structure)
+    \item A confidence measure $c \in [0,1]$
+    \item An explanatory annotation $\alpha$ describing why the system expects this result
+\end{itemize}
+\end{definition}
+These hypotheses represent the system's beliefs about what queries should return, derived from its vector space understanding. For example, in a medical domain, a hypothesis might expect a query about "coughing blood" to return a set of potential conditions with their urgency levels and recommended actions.
+
+\subsection{The Scientific Cycle}
+The system engages in a continuous cycle of hypothesis formation, testing, and refinement:
+
+\begin{enumerate}
+    \item \textbf{Hypothesis Formation}: Given a vector representation $v \in \mathbb{R}^d$, the system generates a set of hypotheses $H = \{h_1, ..., h_n\}$ where each $h_i$ contains a query expressing an expected property of the domain.
+    
+    \item \textbf{Model Construction}: The system maintains a type-theoretical model $M$ in TypeDB expressing its current understanding. Each hypothesis $h_i$ generates both schema elements and test queries.
+    
+    \item \textbf{Verification}: For each hypothesis $h_i$, the system:
+	\begin{itemize}
+		\item Verifies that the query $q_i$ is well-formed TypeQL
+		\item Evaluates $M \models q_i$ directly, yielding a result $r$ in some type $T$
+		\item Compares this with the expected result $r_i$ from the hypothesis
+		\item When $M \not\models \q_i$, records both the actual result and the context in which the expectation failed
+	\end{itemize}
+
+	\item \textbf{Refinement}: Based on verification results, the system either:
+    \begin{itemize}
+        \item Refines individual hypotheses when results don't match expectations
+        \item Updates the model $M$ when multiple hypotheses consistently indicate misalignment
+        \item Extends the schema when necessary to capture newly understood relationships, and retrains itself to reflect the new understanding
+    \end{itemize}
+\end{enumerate}
+
+
+\subsection{Interaction Modes}
+The system supports two primary modes of interaction:
+
+\subsubsection{Natural Language Interface}
+For general users, the system processes natural language through the composition:
+\[
+\text{query} \xrightarrow{\text{embed}} \mathbb{R}^d \xrightarrow{\phi} \text{TypeQL}
+\]
+The answer can draw on the inverse, $\phi^{-1}$, to generate a natural language response based on the model $M$.
+
+\subsubsection{Formal Query Interface}
+enabling formal verification of the system's knowledge and access to structured responses.
+\[
+\varphi \xrightarrow{\text{check}} \text{Types} \xrightarrow{\text{evaluate}} \mathbb{B}
+\]
+
+This dual approach ensures both usability for general interaction and rigorous verifiability where needed. The continuous scientific cycle runs as a background process, gradually improving the system's formal model through hypothesis testing and refinement. 
+
+The use of TypeQL as the query language allows for rich, structured responses beyond simple boolean values, enabling the system to express complex relationships and reasoning chains while maintaining formal verifiability.
+
+
+
+\begin{thebibliography}{9}
+
+\bibitem{shiebler2021category}
+Shiebler, D., Gavranović, B., \& Wilson, P. (2021).
+\textit{Category Theory in Machine Learning}.
+arXiv preprint arXiv:2106.07032.
+
+\bibitem{mimram2020program}
+Mimram, S. (2020).
+\textit{Program = Proof}.
+\end{thebibliography}
+
+\end{document}
